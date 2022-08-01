@@ -1,5 +1,7 @@
+import { Product } from "@prisma/client";
 import { NextPage, GetServerSideProps } from "next";
 import { getSession, useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { Navbar } from "../../components/Navbar";
 import { ProductCard } from "../../components/ProductCard";
 import { trpc } from "../../utils/trpc";
@@ -7,6 +9,14 @@ import { trpc } from "../../utils/trpc";
 const Product: NextPage = () => {
   const session = useSession();
   const products = trpc.useQuery(["product.getAll"]);
+
+  const [productsState, setProductsState] = useState<Product[] | undefined>(
+    undefined
+  );
+
+  useEffect(() => {
+    setProductsState(products.data);
+  }, [products]);
 
   if (
     !session ||
@@ -17,11 +27,12 @@ const Product: NextPage = () => {
     return <p>no session</p>;
 
   return (
-    <div className="h-full bg-gray-900 w-full">
+    <div className="h-max mx-auto my-auto bg-gray-900 w-full">
       <Navbar session={session.data} />
-      <div className="mt-8 px-20 grid grid-rows-6 grid-flow-col gap-4">
+      <div className="mt-8 px-20 container grid grid-rows-6 grid-flow-col gap-4">
         {products.status === "success" &&
-          products.data.map((product, index) => (
+          productsState &&
+          productsState.map((product, index) => (
             <ProductCard
               key={index}
               name={product.name}

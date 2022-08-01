@@ -80,6 +80,78 @@ export const productRouter = createProtectedRouter()
       };
     },
   })
+  .mutation("deleteByBarcode", {
+    input: z.object({
+      barcode: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      const { prisma } = ctx;
+
+      const fetchProduct = await prisma.product.findUnique({
+        where: {
+          barcode: input.barcode,
+        },
+      });
+      if (!fetchProduct) {
+        return {
+          error: {
+            code: "0003",
+            message: "Product not found",
+          },
+        };
+      }
+
+      await prisma.product.delete({
+        where: {
+          barcode: input.barcode,
+        },
+      });
+
+      return {
+        success: true,
+      };
+    },
+  })
+  .mutation("editByBarcode", {
+    input: z.object({
+      barcode: z.string(),
+      name: z.string(),
+      price: z.number(),
+    }),
+    async resolve({ input, ctx }) {
+      const { prisma } = ctx;
+
+      const fetchProduct = await prisma.product.findUnique({
+        where: {
+          barcode: input.barcode,
+        },
+      });
+      if (!fetchProduct) {
+        return {
+          error: {
+            code: "0003",
+            message: "Product not found",
+          },
+        };
+      }
+
+      const updatedProduct = await prisma.product.update({
+        where: {
+          barcode: input.barcode,
+        },
+        data: {
+          name: input.name,
+          price: input.price,
+        },
+      });
+
+      console.log(updatedProduct);
+
+      return {
+        updatedProduct,
+      };
+    },
+  })
   .query("getAll", {
     async resolve({ ctx: { prisma } }) {
       return await prisma.product.findMany();

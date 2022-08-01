@@ -12,19 +12,18 @@ import { trpc } from "../../utils/trpc";
 const CreateProduct: NextPage = () => {
   const session = useSession();
   const createProduct = trpc.useMutation(["product.create"]);
-  const [stop, setStop] = useState(false);
 
   const [name, setName] = useState("");
   const [barcode, setBarcode] = useState("");
   const [price, setPrice] = useState<string | null>("");
-  const [stream, setStream] = useState<boolean>(false);
+  const [readBarcode, setReadBarcode] = useState<boolean>(false);
 
   const handleCreateProduct = () => {
     createProduct.mutate({ name, barcode, price: Number(price) });
   };
 
   return (
-    <div className="h-screen w-screen bg-gray-900">
+    <div className="h-screen bg-gray-900">
       <Navbar session={session.data!} />
       <div className="mb-6 px-9 mt-4 flex justify-center">
         <div className="w-96">
@@ -74,14 +73,14 @@ const CreateProduct: NextPage = () => {
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
             <div className="mt-4 mb-4">
-              {!stop && (
+              {!readBarcode && (
                 <BarCodeScanner
                   onUpdate={(err, res) => {
                     if (err) {
                       console.log(err);
                     } else if (res && res.getText()) {
                       setBarcode(res.getText());
-                      setStop(true);
+                      setReadBarcode(true);
                     }
                   }}
                 />
