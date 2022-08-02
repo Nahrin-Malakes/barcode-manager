@@ -4,12 +4,7 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { Session, User } from "next-auth";
 import { signOut } from "next-auth/react";
-
-const navigation = [
-  { name: "Dashboard", href: "/product", current: true },
-  { name: "Create Product", href: "/product/create", current: false },
-  { name: "Search Product", href: "/product/search", current: false },
-];
+import { useRouter } from "next/router";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -20,6 +15,28 @@ interface Props {
 }
 
 export function Navbar({ session }: Props) {
+  const router = useRouter();
+
+  const navigation = [
+    {
+      name: "Dashboard",
+      href: "/product",
+      current: router.pathname === "/product",
+    },
+    {
+      name: "Create Product",
+      href: "/product/create",
+      current: router.pathname === "/product/create",
+    },
+    {
+      name: "Search Product",
+      href: "/product/search",
+      current: router.pathname === "/product/search",
+    },
+  ];
+
+  console.log(router.pathname);
+
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
