@@ -1,9 +1,11 @@
 import { Product } from "@prisma/client";
+import { randomInt } from "crypto";
 import { NextPage, GetServerSideProps } from "next";
 import { getSession, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Navbar } from "../../components/Navbar";
 import { ProductCard } from "../../components/ProductCard";
+import { Spinner } from "../../components/Spinner";
 import { trpc } from "../../utils/trpc";
 
 const Product: NextPage = () => {
@@ -30,6 +32,7 @@ const Product: NextPage = () => {
     <div className="lg:h-screen sm:h-max mx-auto my-auto bg-gray-900 w-full pb-4">
       <Navbar session={session.data} />
       <div className="mt-4 px-10 container grid md:grid-rows-1 md:grid-flow-row lg:grid-cols-4 lg:grid-rows-4 gap-4">
+        {products.isLoading && <Spinner />}
         {products.status === "success" &&
           productsState &&
           productsState.map((product, index) => (
