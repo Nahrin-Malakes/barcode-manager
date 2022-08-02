@@ -27,9 +27,9 @@ const Product: NextPage = () => {
     return <p>no session</p>;
 
   return (
-    <div className="h-auto mx-auto my-auto bg-gray-900 w-full pb-4">
+    <div className="lg:h-screen sm:h-max mx-auto my-auto bg-gray-900 w-full pb-4">
       <Navbar session={session.data} />
-      <div className="mt-8 px-20 container grid grid-rows-4 grid-flow-col gap-4">
+      <div className="mt-8 px-20 container grid md:grid-rows-1 md:grid-flow-row lg:grid-cols-4 lg:grid-rows-4 gap-4">
         {products.status === "success" &&
           productsState &&
           productsState.map((product, index) => (
