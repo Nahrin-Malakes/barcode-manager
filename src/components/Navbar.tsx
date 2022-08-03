@@ -35,8 +35,6 @@ export function Navbar({ session }: Props) {
     },
   ];
 
-  console.log(router.pathname);
-
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (

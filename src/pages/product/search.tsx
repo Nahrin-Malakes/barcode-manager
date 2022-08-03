@@ -54,7 +54,7 @@ const SearchProduct: NextPage = () => {
                 <BarCodeScanner
                   onUpdate={(err, res) => {
                     if (err) {
-                      console.log(err);
+                      throw Error("error accured while scanning barcode");
                     } else if (res && res.getText()) {
                       setStream(false);
                       setBarcode(res.getText());

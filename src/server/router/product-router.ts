@@ -145,8 +145,6 @@ export const productRouter = createProtectedRouter()
         },
       });
 
-      console.log(updatedProduct);
-
       return {
         updatedProduct,
       };

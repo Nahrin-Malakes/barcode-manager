@@ -29,10 +29,14 @@ const Product: NextPage = () => {
     return <p>no session</p>;
 
   return (
-    <div className="lg:h-screen sm:h-max mx-auto my-auto bg-gray-900 w-full pb-4">
+    <div className="lg:h-max sm:h-max mx-auto my-auto bg-gray-900 w-full pb-4">
       <Navbar session={session.data} />
+      {products.isLoading && (
+        <div className="h-screen flex justify-center mt-4">
+          <Spinner />
+        </div>
+      )}
       <div className="mt-4 px-10 container grid md:grid-rows-1 md:grid-flow-row lg:grid-cols-4 lg:grid-rows-4 gap-4">
-        {products.isLoading && <Spinner />}
         {products.status === "success" &&
           productsState &&
           productsState.map((product, index) => (

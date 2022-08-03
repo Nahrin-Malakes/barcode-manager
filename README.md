@@ -6,3 +6,6 @@ ERROR 0001 = the product you want to create already exists
 ERROR 0002 = Unautherized to create product /// not authnticated
 ERROR 0003 = Product not found
 
+# Todo
+
+consider getServerSideProps
