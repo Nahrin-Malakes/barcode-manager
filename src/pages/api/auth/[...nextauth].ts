@@ -10,7 +10,11 @@ export const authOptions: NextAuthOptions = {
   // Include user.id on session
   callbacks: {
     signIn({ profile }) {
-      const emails = ["shoam233@gmail.com", "ilaimalakes@gmail.com"];
+      const emails = [
+        "shoam233@gmail.com",
+        "ilaimalakes@gmail.com",
+        "nahrinmalakes12@gmail.com",
+      ];
 
       if (!profile.email) return false;
 
