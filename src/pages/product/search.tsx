@@ -9,6 +9,7 @@ import { FaSearch } from "react-icons/fa";
 
 import { Navbar } from "../../components/Navbar";
 import { ProductCard } from "../../components/ProductCard";
+import { Spinner } from "../../components/Spinner";
 import { trpc } from "../../utils/trpc";
 
 const SearchProduct: NextPage = () => {
@@ -72,6 +73,9 @@ const SearchProduct: NextPage = () => {
             </div>
           </form>
 
+          <div className="flex justify-center">
+            {searchProduct.isLoading && <Spinner />}
+          </div>
           {searchProduct.isSuccess && searchProduct.data.fetchProduct && (
             <ProductCard
               barcode={searchProduct.data.fetchProduct.barcode}

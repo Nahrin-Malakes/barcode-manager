@@ -16,20 +16,30 @@ interface Props {
 export const ProductCard = ({ name, barcode, price }: Props) => {
   const deleteProduct = trpc.useMutation(["product.deleteByBarcode"]);
   const editProduct = trpc.useMutation(["product.editByBarcode"]);
+  const [errorModalShow, setErrorModalShow] = useState(false);
+
   const router = useRouter();
 
   const DeleteProductModal = () => {
     const [showModal, setShowModal] = useState(false);
 
     const handleDelete = () => {
-      deleteProduct.mutate({
-        barcode,
-      });
-
-      if (deleteProduct.data?.success) {
-        setShowModal(false);
-        router.reload();
-      }
+      deleteProduct.mutate(
+        {
+          barcode,
+        },
+        {
+          onError(error) {
+            if (error.data?.code == "UNAUTHORIZED") {
+              setErrorModalShow(true);
+            }
+          },
+          onSuccess() {
+            setShowModal(false);
+            router.reload();
+          },
+        }
+      );
     };
 
     return (
@@ -95,12 +105,21 @@ export const ProductCard = ({ name, barcode, price }: Props) => {
 
     const handleEdit = () => {
       setShowModal(false);
-      editProduct.mutate({
-        barcode,
-        name: editName,
-        price: editPrice,
-      });
-      router.reload();
+      editProduct.mutate(
+        {
+          barcode,
+          name: editName,
+          price: editPrice,
+        },
+        {
+          onError() {
+            setErrorModalShow(true);
+          },
+          onSuccess() {
+            router.reload();
+          },
+        }
+      );
     };
 
     return (
@@ -237,24 +256,71 @@ export const ProductCard = ({ name, barcode, price }: Props) => {
     );
   };
 
+  const ErrorModal = () => {
+    return (
+      <>
+        {errorModalShow ? (
+          <>
+            <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+              <div className="relative w-auto my-6 mx-auto max-w-3xl">
+                {/*content*/}
+                <div className="border-0 text-gray-100 rounded-lg shadow-lg relative flex flex-col w-full bg-gray-700 outline-none focus:outline-none">
+                  {/*header*/}
+                  <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
+                    <h3 className="text-2xl font-semibold">
+                      You {`can't`} do this
+                    </h3>
+                    <button
+                      className="p-1 ml-auto bg-transparent border-0 text-gray-100 opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                      onClick={() => setErrorModalShow(false)}
+                    >
+                      <span className="bg-transparent text-gray-100 opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                        ×
+                      </span>
+                    </button>
+                  </div>
+
+                  {/*footer*/}
+                  <div className="flex items-center justify-center p-6 border-t border-solid border-slate-200 rounded-b">
+                    <button
+                      className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                      type="button"
+                      onClick={() => setErrorModalShow(false)}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+          </>
+        ) : null}
+      </>
+    );
+  };
+
   return (
-    <div className="max-w-sm bg-white flex rounded-lg shadow-md dark:bg-gray-800 justify-center dark:border-gray-700">
-      <div className="px-5 pb-5">
-        <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white mt-4">
-          שם מוצר: {name}
-        </h5>
-        <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white ">
-          ברקוד: {barcode}
-        </h5>
-        <div className="flex justify-between items-center">
-          <span className="text-xl font-bold text-gray-900 dark:text-white">
-            מחיר: {price + "₪"}
-          </span>
+    <>
+      <div className="max-w-sm bg-white flex rounded-lg shadow-md dark:bg-gray-800 justify-center dark:border-gray-700">
+        <div className="px-5 pb-5">
+          <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white mt-4">
+            שם מוצר: {name}
+          </h5>
+          <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white ">
+            ברקוד: {barcode}
+          </h5>
+          <div className="flex justify-between items-center">
+            <span className="text-xl font-bold text-gray-900 dark:text-white">
+              מחיר: {price + "₪"}
+            </span>
+          </div>
+          <DeleteProductModal />
+          <EditProductModal />
+          <ShowBarcodeModal />
+          <ErrorModal />
         </div>
-        <DeleteProductModal />
-        <EditProductModal />
-        <ShowBarcodeModal />
       </div>
-    </div>
+    </>
   );
 };

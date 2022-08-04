@@ -35,7 +35,7 @@ const Product: NextPage = () => {
           <Spinner />
         </div>
       )}
-      <div className="mt-4 px-10 container grid md:grid-rows-1 md:grid-flow-row lg:grid-cols-4 lg:grid-rows-4 gap-4">
+      <div className="mt-4 lg:px-32 px-10 grid md:grid-rows-1 md:grid-flow-row lg:grid-cols-4 lg:grid-rows-4 gap-4">
         {products.status === "success" &&
           productsState &&
           productsState.map((product, index) => (

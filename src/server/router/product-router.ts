@@ -94,12 +94,9 @@ export const productRouter = createProtectedRouter()
         },
       });
       if (!fetchProduct) {
-        return {
-          error: {
-            code: "0003",
-            message: "Product not found",
-          },
-        };
+        throw new TRPCError({
+          code: "NOT_FOUND",
+        });
       }
 
       const user = await prisma.user.findUnique({
@@ -108,21 +105,16 @@ export const productRouter = createProtectedRouter()
         },
       });
       if (!user) {
-        return {
-          code: "0005",
-          message: "The owner of the product does not exists anymore",
-        };
+        throw new TRPCError({
+          code: "NOT_FOUND",
+        });
       }
 
       if (
         fetchProduct.userId !== ctx.session.user.id ||
         user.role !== "ADMIN"
       ) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message:
-            "User does not owning the product or not authorized to do this action",
-        });
+        throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
       await prisma.product.delete({
@@ -132,7 +124,9 @@ export const productRouter = createProtectedRouter()
       });
 
       return {
-        success: true,
+        data: {
+          success: true,
+        },
       };
     },
   })
@@ -157,6 +151,24 @@ export const productRouter = createProtectedRouter()
             message: "Product not found",
           },
         };
+      }
+
+      const user = await prisma.user.findUnique({
+        where: {
+          id: ctx.session.user.id,
+        },
+      });
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+        });
+      }
+
+      if (
+        fetchProduct.userId !== ctx.session.user.id ||
+        user.role !== "ADMIN"
+      ) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
       const updatedProduct = await prisma.product.update({
