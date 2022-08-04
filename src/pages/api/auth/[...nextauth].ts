@@ -9,6 +9,16 @@ import { env } from "../../../env/server.mjs";
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
   callbacks: {
+    signIn({ profile }) {
+      const emails = ["shoam233@gmail.com", "ilaimalakes@gmail.com"];
+
+      if (!profile.email) return false;
+
+      if (emails.includes(profile.email)) {
+        return true;
+      }
+      return false;
+    },
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
