@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { trpc } from "../utils/trpc";
 // @ts-ignore
 import Barcode from "react-barcode";
@@ -18,21 +18,23 @@ export const ProductCard = ({ name, barcode, price }: Props) => {
   const editProduct = trpc.useMutation(["product.editByBarcode"]);
   const router = useRouter();
 
-  useEffect(() => {});
-
   const DeleteProductModal = () => {
     const [showModal, setShowModal] = useState(false);
 
     const handleDelete = () => {
-      setShowModal(false);
       deleteProduct.mutate({
         barcode,
       });
-      router.reload();
+
+      if (deleteProduct.data?.success) {
+        setShowModal(false);
+        router.reload();
+      }
     };
 
     return (
       <>
+        {" "}
         <button
           className="text-white mt-2 cursor-pointer bg-red-700 hover:bg-blue-800 focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700"
           type={"submit"}
@@ -258,4 +260,3 @@ export const ProductCard = ({ name, barcode, price }: Props) => {
     </div>
   );
 };
-

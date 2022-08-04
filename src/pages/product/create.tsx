@@ -27,74 +27,83 @@ const CreateProduct: NextPage = () => {
       <Navbar session={session.data!} />
       <div className="mb-6 px-9 mt-4 flex justify-center">
         <div className="w-96">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleCreateProduct();
-            }}
+          <label
+            htmlFor="name"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
           >
-            <label
-              htmlFor="name"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+            Name
+          </label>
+          <input
+            type="text"
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          />
+          <label
+            htmlFor="barcode"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 mt-4"
+          >
+            Barcode
+          </label>
+          <input
+            type="text"
+            id="barcode"
+            value={barcode}
+            onChange={(e) => setBarcode(e.target.value)}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          />
+          <label
+            htmlFor="price"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 mt-4"
+          >
+            Price
+          </label>
+          <input
+            type="text"
+            id="price"
+            value={price?.toString()}
+            onChange={(e) => setPrice(e.target.value)}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          />
+          <div className="mt-4 mb-4">
+            {!readBarcode && (
+              <BarCodeScanner
+                onUpdate={(err, res) => {
+                  if (err) {
+                    console.error(err);
+                  } else if (res && res.getText()) {
+                    setBarcode(res.getText());
+                    setReadBarcode(true);
+                  }
+                }}
+              />
+            )}
+          </div>
+          <div className="">
+            <button
+              className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              type={"submit"}
+              onClick={(e) => {
+                e.preventDefault();
+                handleCreateProduct();
+              }}
             >
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
-            <label
-              htmlFor="barcode"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 mt-4"
+              Create Product
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setBarcode("");
+                setName("");
+                setPrice("");
+                setReadBarcode(true);
+              }}
+              className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
             >
-              Barcode
-            </label>
-            <input
-              type="text"
-              id="barcode"
-              value={barcode}
-              onChange={(e) => setBarcode(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
-            <label
-              htmlFor="price"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 mt-4"
-            >
-              Price
-            </label>
-            <input
-              type="text"
-              id="price"
-              value={price?.toString()}
-              onChange={(e) => setPrice(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
-            <div className="mt-4 mb-4">
-              {!readBarcode && (
-                <BarCodeScanner
-                  onUpdate={(err, res) => {
-                    if (err) {
-                      throw Error("error accured while scanning barcode");
-                    } else if (res && res.getText()) {
-                      setBarcode(res.getText());
-                      setReadBarcode(true);
-                    }
-                  }}
-                />
-              )}
-            </div>
-            <div className="">
-              <button
-                className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                type={"submit"}
-              >
-                Create Product
-              </button>
-            </div>
-          </form>
+              Reset
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -118,4 +127,3 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 export default CreateProduct;
-

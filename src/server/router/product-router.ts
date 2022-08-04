@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createProtectedRouter } from "./protected-router";
 
@@ -101,6 +102,29 @@ export const productRouter = createProtectedRouter()
         };
       }
 
+      const user = await prisma.user.findUnique({
+        where: {
+          id: ctx.session.user.id,
+        },
+      });
+      if (!user) {
+        return {
+          code: "0005",
+          message: "The owner of the product does not exists anymore",
+        };
+      }
+
+      if (
+        fetchProduct.userId !== ctx.session.user.id ||
+        user.role !== "ADMIN"
+      ) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message:
+            "User does not owning the product or not authorized to do this action",
+        });
+      }
+
       await prisma.product.delete({
         where: {
           barcode: input.barcode,
@@ -152,7 +176,8 @@ export const productRouter = createProtectedRouter()
   })
   .query("getAll", {
     async resolve({ ctx: { prisma } }) {
-      return await prisma.product.findMany();
+      return await prisma.product.findMany({
+        orderBy: [{ updatedAt: "desc" }],
+      });
     },
   });
-
