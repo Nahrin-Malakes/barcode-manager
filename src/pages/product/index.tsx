@@ -1,5 +1,4 @@
 import { Product } from "@prisma/client";
-import { randomInt } from "crypto";
 import { NextPage, GetServerSideProps } from "next";
 import { getSession, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -71,4 +70,3 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 export default Product;
-
