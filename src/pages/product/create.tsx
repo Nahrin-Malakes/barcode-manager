@@ -154,7 +154,7 @@ const CreateProduct: NextPage = () => {
             >
               <BiReset />
             </button>
-            <ShowBarcodeModal />
+            {barcode.length > 0 && <ShowBarcodeModal />}
           </div>
         </div>
       </div>
