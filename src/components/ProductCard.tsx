@@ -190,8 +190,6 @@ export const ProductCard = ({ name, barcode, price }: Props) => {
 
   const ShowBarcodeModal = () => {
     const [showModal, setShowModal] = useState(false);
-    const [editName, setEditName] = useState(name);
-    const [editPrice, setEditPrice] = useState(price);
 
     return (
       <>
