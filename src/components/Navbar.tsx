@@ -19,7 +19,7 @@ export function Navbar({ session }: Props) {
 
   const navigation = [
     {
-      name: "Dashboard",
+      name: "Products",
       href: "/product",
       current: router.pathname === "/product",
     },
@@ -178,4 +178,3 @@ export function Navbar({ session }: Props) {
     </Disclosure>
   );
 }
-
