@@ -2,6 +2,7 @@ import { GetServerSideProps, NextPage } from "next";
 import { getSession, useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import { BiReset } from "react-icons/bi";
 const BarCodeScanner = dynamic(() => import("barcode-react-scanner"), {
   ssr: false,
 });
@@ -69,6 +70,16 @@ const SearchProduct: NextPage = () => {
                 type={"submit"}
               >
                 <FaSearch />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setBarcode("");
+                  setStream(true);
+                }}
+                className="text-white mb-4 ml-4 cursor-pointer bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-lg px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                <BiReset />
               </button>
             </div>
           </form>
