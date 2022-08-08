@@ -55,30 +55,44 @@ export const productRouter = createProtectedRouter()
       };
     },
   })
-  .mutation("getByBarcode", {
+  .mutation("getByBarcodeOrName", {
     input: z.object({
-      barcode: z.string(),
+      barcodeName: z.string(),
     }),
     async resolve({ input, ctx }) {
       const { prisma } = ctx;
 
-      const fetchProduct = await prisma.product.findUnique({
-        where: {
-          barcode: input.barcode,
-        },
-      });
-      if (!fetchProduct) {
-        return {
-          error: {
-            code: "0003",
-            message: "Product not found",
+      if (input.barcodeName) {
+        const fetchProduct = await prisma.product.findUnique({
+          where: {
+            barcode: input.barcodeName,
           },
+        });
+        if (!fetchProduct) {
+          console.error("Product not found by id, retrying with name");
+          const fetchByName = await prisma.product.findMany({
+            where: {
+              name: input.barcodeName,
+            },
+          });
+
+          if (!fetchByName) {
+            return {
+              error: {
+                code: "0003",
+                message: "Product not found",
+              },
+            };
+          }
+
+          return {
+            fetchByName,
+          };
+        }
+        return {
+          fetchProduct,
         };
       }
-
-      return {
-        fetchProduct,
-      };
     },
   })
   .mutation("deleteByBarcode", {
