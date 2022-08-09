@@ -4,13 +4,13 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { BiReset } from "react-icons/bi";
 import { AiOutlinePlus } from "react-icons/ai";
+
+import { Navbar } from "@/components/Navbar";
+import { ShowBarcodeModal } from "@/components/ShowBarcodeModal";
+import { trpc } from "@/utils/trpc";
 const BarCodeScanner = dynamic(() => import("barcode-react-scanner"), {
   ssr: false,
 });
-
-import { Navbar } from "../../components/Navbar";
-import { trpc } from "../../utils/trpc";
-import { ShowBarcodeModal } from "../../components/ShowBarcodeModal";
 
 const CreateProduct: NextPage = () => {
   const session = useSession();

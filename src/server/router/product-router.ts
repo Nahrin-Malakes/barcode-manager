@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createProtectedRouter } from "./protected-router";
+import { createProtectedRouter } from "@/trpc/router/protected-router";
 
 // Example router with queries that can only be hit if the user requesting is signed in
 export const productRouter = createProtectedRouter()

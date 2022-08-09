@@ -1,11 +1,12 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { trpc } from "../utils/trpc";
 // @ts-ignore
 import Barcode from "react-barcode";
 import { BsFillTrashFill } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
 import { BiBarcodeReader } from "react-icons/bi";
+
+import { trpc } from "@/utils/trpc";
 
 interface Props {
   name: string;

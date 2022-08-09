@@ -1,11 +1,12 @@
+import { useEffect, useState } from "react";
 import { Product } from "@prisma/client";
 import { NextPage, GetServerSideProps } from "next";
 import { getSession, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { Navbar } from "../../components/Navbar";
-import { ProductCard } from "../../components/ProductCard";
-import { Spinner } from "../../components/Spinner";
-import { trpc } from "../../utils/trpc";
+
+import { Navbar } from "@/components/Navbar";
+import { ProductCard } from "@/components/ProductCard";
+import { Spinner } from "@/components/Spinner";
+import { trpc } from "@/utils/trpc";
 
 const Product: NextPage = () => {
   const session = useSession();

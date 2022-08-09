@@ -16,7 +16,14 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "baseUrl": "src",
+    "paths": {
+      "@/components/*": ["components/*"],
+      "@/utils/*": ["utils/*"],
+      "@/trpc/*": ["server/*"],
+      "@/api/*": ["pages/api/*"],
+    }
   },
   "include": [
     "next-env.d.ts",

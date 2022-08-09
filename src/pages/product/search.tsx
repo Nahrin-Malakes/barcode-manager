@@ -8,11 +8,11 @@ const BarCodeScanner = dynamic(() => import("barcode-react-scanner"), {
 });
 import { FaSearch } from "react-icons/fa";
 
-import { Navbar } from "../../components/Navbar";
-import { ProductCard } from "../../components/ProductCard";
-import { ShowBarcodeModal } from "../../components/ShowBarcodeModal";
-import { Spinner } from "../../components/Spinner";
-import { trpc } from "../../utils/trpc";
+import { Spinner } from "@/components/Spinner";
+import { trpc } from "@/utils/trpc";
+import { Navbar } from "@/components/Navbar";
+import { ProductCard } from "@/components/ProductCard";
+import { ShowBarcodeModal } from "@/components/ShowBarcodeModal";
 
 const SearchProduct: NextPage = () => {
   const session = useSession();
