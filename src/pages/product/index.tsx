@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 import { Product } from "@prisma/client";
 import { NextPage, GetServerSideProps } from "next";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 
 import { Navbar } from "@/components/Navbar";
 import { ProductCard } from "@/components/ProductCard";
 import { Spinner } from "@/components/Spinner";
 import { trpc } from "@/utils/trpc";
+import { Session } from "next-auth";
 
-const Product: NextPage = () => {
-  const session = useSession();
+interface Props {
+  sess: Session;
+}
+
+const Product: NextPage<Props> = ({ sess: session }) => {
   const products = trpc.useQuery(["product.getAll"]);
 
   const [productsState, setProductsState] = useState<Product[] | undefined>(
@@ -20,17 +24,9 @@ const Product: NextPage = () => {
     setProductsState(products.data);
   }, [products]);
 
-  if (
-    !session ||
-    !session.data ||
-    !session.data.user ||
-    !session.data.user.image
-  )
-    return <p>no session</p>;
-
   return (
     <div className="lg:h-max sm:h-max mx-auto my-auto bg-gray-900 w-full pb-4">
-      <Navbar session={session.data} />
+      <Navbar session={session} />
       {products.isLoading && (
         <div className="h-screen flex justify-center mt-4">
           <Spinner />
@@ -54,18 +50,16 @@ const Product: NextPage = () => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getSession(ctx);
-  if (!session) {
+
+  if (!session)
     return {
-      redirect: {
-        destination: "/api/auth/signin",
-      },
+      notFound: true,
       props: {},
     };
-  }
 
   return {
     props: {
-      session,
+      sess: session,
     },
   };
 };

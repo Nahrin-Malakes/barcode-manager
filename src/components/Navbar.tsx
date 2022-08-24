@@ -1,5 +1,5 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { Session } from "next-auth";
@@ -14,7 +14,7 @@ interface Props {
   session: Session;
 }
 
-export function Navbar({ session }: Props) {
+export const Navbar: React.FC<Props> = ({ session }) => {
   const router = useRouter();
 
   const navigation = [
@@ -177,4 +177,4 @@ export function Navbar({ session }: Props) {
       )}
     </Disclosure>
   );
-}
+};

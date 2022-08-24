@@ -1,5 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { BiReset } from "react-icons/bi";
@@ -13,9 +13,13 @@ import { trpc } from "@/utils/trpc";
 import { Navbar } from "@/components/Navbar";
 import { ProductCard } from "@/components/ProductCard";
 import { ShowBarcodeModal } from "@/components/ShowBarcodeModal";
+import { Session } from "next-auth";
 
-const SearchProduct: NextPage = () => {
-  const session = useSession();
+interface Props {
+  sess: Session;
+}
+
+const SearchProduct: NextPage<Props> = ({ sess }) => {
   const searchProduct = trpc.useMutation(["product.getByBarcodeOrName"]);
 
   const [barcodeName, setBarcodeName] = useState("");
@@ -29,7 +33,7 @@ const SearchProduct: NextPage = () => {
 
   return (
     <div className="h-screen w-screen overflow-x-hidden bg-gray-900">
-      <Navbar session={session.data!} />
+      <Navbar session={sess} />
       <div className="mb-6 px-9 mt-4 flex justify-center">
         <div className="w-96">
           <form
@@ -136,7 +140,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   return {
     props: {
-      session,
+      sess: session,
     },
   };
 };
