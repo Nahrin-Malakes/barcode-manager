@@ -5,6 +5,7 @@ import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
+import { trpc } from "@/utils/trpc";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -16,6 +17,7 @@ interface Props {
 
 export const Navbar: React.FC<Props> = ({ session }) => {
   const router = useRouter();
+  const isAdmin = trpc.useQuery(["user.is-admin"]);
 
   const navigation = [
     {
@@ -34,6 +36,14 @@ export const Navbar: React.FC<Props> = ({ session }) => {
       current: router.pathname === "/product/search",
     },
   ];
+
+  if (isAdmin.data?.isAdmin) {
+    navigation.push({
+      name: "Admin Panel",
+      href: "/admin",
+      current: router.pathname === "/admin",
+    });
+  }
 
   return (
     <Disclosure as="nav" className="bg-gray-800">

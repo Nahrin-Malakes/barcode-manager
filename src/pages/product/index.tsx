@@ -53,7 +53,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   if (!session)
     return {
-      notFound: true,
+      redirect: {
+        destination: "/api/auth/signin",
+      },
       props: {},
     };
 

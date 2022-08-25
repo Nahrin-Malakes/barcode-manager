@@ -71,10 +71,17 @@ export const userRouter = createProtectedRouter()
           sessions: null,
         };
 
-      const sessions = await ctx.prisma.session.findMany();
+      const sessions = await ctx.prisma.session.findMany({
+        where: {
+          NOT: {
+            userId: user.id,
+          },
+        },
+        include: {
+          user: true,
+        },
+      });
 
-      return {
-        sessions,
-      };
+      return { sessions };
     },
   });

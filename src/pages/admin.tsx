@@ -1,10 +1,16 @@
+import { Navbar } from "@/components/Navbar";
 import { SessionCard } from "@/components/SessionCard";
 import { Spinner } from "@/components/Spinner";
 import { trpc } from "@/utils/trpc";
+import { Session } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 
-const AdminPage = () => {
+interface Props {
+  sess: Session;
+}
+
+const AdminPage = ({ sess }: Props) => {
   const user = trpc.useQuery(["user.is-admin"]);
   const sessions = trpc.useQuery(["user.get-sessions"]);
 
@@ -16,15 +22,13 @@ const AdminPage = () => {
 
   return (
     <div className="h-screen bg-gray-900 text-gray-100">
+      {/* @ts-ignore */}
+      <Navbar session={sess} />
       <h1>Active sessions: </h1>
       {sessions.isLoading || (sessions.isFetching && <Spinner />)}
       {sessions.data.sessions &&
         sessions.data.sessions.map((session) => (
-          <SessionCard
-            key={session.id}
-            sessionId={session.id}
-            userId={session.userId}
-          />
+          <SessionCard key={session.id} session={session} />
         ))}
     </div>
   );
