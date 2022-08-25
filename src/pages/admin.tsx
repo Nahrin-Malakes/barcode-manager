@@ -1,21 +1,25 @@
 import { SessionCard } from "@/components/SessionCard";
-import { Session } from "@prisma/client";
+import { Spinner } from "@/components/Spinner";
+import { trpc } from "@/utils/trpc";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
-import { serialize } from "superjson";
 
-interface Props {
-  sessions: {
-    json: Session[];
-  };
-}
+const AdminPage = () => {
+  const user = trpc.useQuery(["user.is-admin"]);
+  const sessions = trpc.useQuery(["user.get-sessions"]);
 
-const AdminPage = ({ sessions }: Props) => {
+  if (user.data && user.data?.isAdmin == true) {
+    console.log(sessions);
+  }
+
+  if (!sessions.data?.sessions) return;
+
   return (
     <div className="h-screen bg-gray-900 text-gray-100">
       <h1>Active sessions: </h1>
-      {sessions.json &&
-        sessions.json.map((session) => (
+      {sessions.isLoading || (sessions.isFetching && <Spinner />)}
+      {sessions.data.sessions &&
+        sessions.data.sessions.map((session) => (
           <SessionCard
             key={session.id}
             sessionId={session.id}
@@ -35,24 +39,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       props: {},
     };
 
-  const user = await prisma?.user.findUnique({
-    where: {
-      id: session.user.id,
-    },
-  });
-  if (user?.role !== "ADMIN") {
-    return {
-      notFound: true,
-      props: {},
-    };
-  }
-
-  const sessions = await prisma?.session.findMany({});
-
   return {
     props: {
       sess: session,
-      sessions: serialize(sessions),
     },
   };
 };
