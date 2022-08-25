@@ -1,4 +1,5 @@
 import { createProtectedRouter } from "@/trpc/router/protected-router";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 // Example router with queries that can only be hit if the user requesting is signed in
@@ -14,7 +15,9 @@ export const userRouter = createProtectedRouter()
           id: ctx.session.user.id,
         },
       });
-      if (!user || user.role !== "ADMIN") return;
+      if (!user || user.role !== "ADMIN") {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
 
       const sessionOwner = await ctx.prisma.user.findUnique({
         where: {
@@ -66,10 +69,11 @@ export const userRouter = createProtectedRouter()
           sessions: null,
         };
 
-      if (user.role !== "ADMIN")
-        return {
-          sessions: null,
-        };
+      if (user.role !== "ADMIN") {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
 
       const sessions = await ctx.prisma.session.findMany({
         where: {

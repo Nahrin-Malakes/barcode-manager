@@ -5,18 +5,24 @@ import { trpc } from "@/utils/trpc";
 import { Session } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 interface Props {
   sess: Session;
 }
 
 const AdminPage = ({ sess }: Props) => {
-  const user = trpc.useQuery(["user.is-admin"]);
-  const sessions = trpc.useQuery(["user.get-sessions"]);
+  const router = useRouter();
+  const sessions = trpc.useQuery(["user.get-sessions"], {
+    retry: false,
+    onError(err) {
+      if (err.data?.code === "UNAUTHORIZED") {
+        router.push("/api/auth/signin");
+      }
+    },
+  });
 
-  if (user.data && user.data?.isAdmin == true) {
-    console.log(sessions);
-  }
+  console.log(sessions);
 
   if (!sessions.data?.sessions) return;
 
