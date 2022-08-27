@@ -202,8 +202,9 @@ export const productRouter = createProtectedRouter()
   })
   .query("getAll", {
     async resolve({ ctx: { prisma } }) {
-      return await prisma.product.findMany({
+      const products = await prisma.product.findMany({
         orderBy: [{ updatedAt: "desc" }],
       });
+      return products;
     },
   });
