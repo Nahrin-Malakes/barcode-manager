@@ -10,10 +10,10 @@ import { FaSearch } from "react-icons/fa";
 
 import { Spinner } from "@/components/Spinner";
 import { trpc } from "@/utils/trpc";
-import { Navbar } from "@/components/Navbar";
 import { ProductCard } from "@/components/ProductCard";
 import { ShowBarcodeModal } from "@/components/ShowBarcodeModal";
 import { Session } from "next-auth";
+import { Nav } from "@/components/Navbar";
 
 interface Props {
   sess: Session;
@@ -33,7 +33,7 @@ const SearchProduct: NextPage<Props> = ({ sess }) => {
 
   return (
     <div className="h-screen w-screen overflow-x-hidden bg-gray-900">
-      <Navbar session={sess} />
+      <Nav user={sess.user} />
       <div className="mb-6 px-9 mt-4 flex justify-center">
         <div className="w-96">
           <form

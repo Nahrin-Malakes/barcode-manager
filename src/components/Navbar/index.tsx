@@ -36,6 +36,18 @@ export const Nav = ({ user }: INavProps) => {
         <Navbar.Link isActive={router.pathname == "/product"} href="/product">
           Home
         </Navbar.Link>
+        <Navbar.Link
+          isActive={router.pathname == "/product/create"}
+          href="/product/create"
+        >
+          Create Product
+        </Navbar.Link>
+        <Navbar.Link
+          isActive={router.pathname == "/product/search"}
+          href="/product/search"
+        >
+          Search Product
+        </Navbar.Link>
       </Navbar.Content>
       <Navbar.Content
         css={{

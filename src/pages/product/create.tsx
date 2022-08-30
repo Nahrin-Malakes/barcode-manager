@@ -4,11 +4,10 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { BiReset } from "react-icons/bi";
 import { AiOutlinePlus } from "react-icons/ai";
-
-import { Navbar } from "@/components/Navbar";
 import { ShowBarcodeModal } from "@/components/ShowBarcodeModal";
 import { trpc } from "@/utils/trpc";
 import { Session } from "next-auth";
+import { Nav } from "@/components/Navbar";
 const BarCodeScanner = dynamic(() => import("barcode-react-scanner"), {
   ssr: false,
 });
@@ -31,7 +30,7 @@ const CreateProduct: NextPage<Props> = ({ sess }) => {
 
   return (
     <div className="h-screen bg-gray-900">
-      <Navbar session={sess} />
+      <Nav user={sess.user} />
       <div className="mb-6 px-9 mt-4 flex justify-center">
         <div className="w-96 text-">
           <label
