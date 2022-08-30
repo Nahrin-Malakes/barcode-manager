@@ -2,11 +2,13 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 // @ts-ignore
 import Barcode from "react-barcode";
-import { BsFillTrashFill } from "react-icons/bs";
+import { IoLogoUsd } from "react-icons/io";
 import { FiEdit } from "react-icons/fi";
-import { BiBarcodeReader } from "react-icons/bi";
+import { BiBarcodeReader, BiRename, BiTrash } from "react-icons/bi";
+import { toast } from "react-toastify";
 
 import { trpc } from "@/utils/trpc";
+import { Button, Card, Input, Modal, Row, Text } from "@nextui-org/react";
 
 interface Props {
   name: string;
@@ -22,9 +24,15 @@ export const ProductCard = ({ name, barcode, price }: Props) => {
   const router = useRouter();
 
   const DeleteProductModal = () => {
-    const [showModal, setShowModal] = useState(false);
+    const [visible, setVisible] = useState(false);
 
-    const handleDelete = () => {
+    const handler = () => setVisible(true);
+
+    const closeHandler = () => {
+      setVisible(false);
+    };
+
+    const deleteHandler = () => {
       deleteProduct.mutate(
         {
           barcode,
@@ -36,7 +44,7 @@ export const ProductCard = ({ name, barcode, price }: Props) => {
             }
           },
           onSuccess() {
-            setShowModal(false);
+            setVisible(false);
             router.reload();
           },
         }
@@ -45,67 +53,49 @@ export const ProductCard = ({ name, barcode, price }: Props) => {
 
     return (
       <>
-        {" "}
-        <button
-          className="text-white mt-2 cursor-pointer bg-red-700 hover:bg-blue-800 focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700"
-          type={"submit"}
-          onClick={() => setShowModal(true)}
+        <Button auto color="error" shadow onPress={handler}>
+          <BiTrash />
+        </Button>
+        <Modal
+          closeButton
+          blur
+          aria-labelledby="modal-title"
+          open={visible}
+          onClose={closeHandler}
         >
-          <BsFillTrashFill />
-        </button>
-        {showModal ? (
-          <>
-            <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-              <div className="relative w-auto my-6 mx-auto max-w-xl">
-                {/*content*/}
-                <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-gray-700 outline-none focus:outline-none">
-                  {/*header*/}
-                  <div className="flex items-start justify-between  border-slate-200 rounded-t">
-                    <button
-                      className="p-1 ml-auto bg-transparent border-0 opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                      onClick={() => setShowModal(false)}
-                    ></button>
-                  </div>
-                  {/*body*/}
-                  <div className="relative p-6 flex-auto">
-                    <h1 className="my-4 text-gray-300 text-2xl leading-relaxed">
-                      Are you sure you want to delete this product?
-                    </h1>
-                  </div>
-                  {/*footer*/}
-                  <div className="flex items-center justify-center p-6 border-t border-solid border-slate-200 rounded-b">
-                    <button
-                      onClick={handleDelete}
-                      type="button"
-                      className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2"
-                    >
-                      Yes, {"I'm"} sure
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setShowModal(false)}
-                      className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
-                    >
-                      No, cancel
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
-          </>
-        ) : null}
+          <Modal.Header>
+            <Text id="modal-title" h4>
+              Are you sure you want to delete this product?
+            </Text>
+          </Modal.Header>
+
+          <Modal.Footer>
+            <Button auto flat color="default" onPress={closeHandler}>
+              Close
+            </Button>
+            <Button auto color="error" onPress={deleteHandler}>
+              Delete
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </>
     );
   };
 
   const EditProductModal = () => {
-    const [showModal, setShowModal] = useState(false);
+    const [visible, setVisible] = useState(false);
+
+    const handler = () => setVisible(true);
+
+    const closeHandler = () => {
+      setVisible(false);
+    };
+
     const [editName, setEditName] = useState(name);
     const [editPrice, setEditPrice] = useState(price);
 
-    const handleEdit = () => {
-      setShowModal(false);
+    const editHandler = () => {
+      setVisible(false);
       editProduct.mutate(
         {
           barcode,
@@ -113,8 +103,9 @@ export const ProductCard = ({ name, barcode, price }: Props) => {
           price: editPrice,
         },
         {
-          onError() {
-            setErrorModalShow(true);
+          onError(err) {
+            toast(err.message);
+            console.log(err);
           },
           onSuccess() {
             router.reload();
@@ -125,134 +116,93 @@ export const ProductCard = ({ name, barcode, price }: Props) => {
 
     return (
       <>
-        <button
-          className="text-white mt-2 cursor-pointer bg-blue-700 hover:bg-blue-800 mx-2 focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-700 dark:hover:bg-blue-800"
-          type={"submit"}
-          onClick={() => setShowModal(true)}
-        >
+        <Button auto color="default" shadow onPress={handler}>
           <FiEdit />
-        </button>
-        {showModal ? (
-          <>
-            <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-              <div className="relative w-96 mx-auto max-w-xl">
-                {/*content*/}
-                <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-gray-700 outline-none focus:outline-none">
-                  {/*header*/}
-                  <div className="flex items-start justify-between  border-slate-200 rounded-t">
-                    <button
-                      className="p-1 ml-auto bg-transparent border-0 opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                      onClick={() => setShowModal(false)}
-                    ></button>
-                  </div>
-                  {/*body*/}
-                  <div className="relative p-6 flex-auto">
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        handleEdit();
-                      }}
-                    >
-                      <label
-                        htmlFor="name"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                      >
-                        Name
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        value={editName}
-                        onChange={(e) => setEditName(e.target.value)}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      />
-                      <label
-                        htmlFor="price"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300 mt-4"
-                      >
-                        Price
-                      </label>
-                      <input
-                        type="text"
-                        id="price"
-                        value={editPrice.toString()}
-                        onChange={(e) => setEditPrice(Number(e.target.value))}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      />
-                    </form>
-                  </div>
-                  {/*footer*/}
-                  <div className="flex items-center justify-center p-6 border-t border-solid border-slate-200 rounded-b">
-                    <button
-                      onClick={handleEdit}
-                      type="button"
-                      className="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setShowModal(false)}
-                      className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
-          </>
-        ) : null}
+        </Button>
+        <Modal
+          closeButton
+          blur
+          aria-labelledby="modal-title"
+          open={visible}
+          onClose={closeHandler}
+        >
+          <Modal.Header>
+            <Text id="modal-title" size={18}>
+              Edit Product
+            </Text>
+          </Modal.Header>
+          <Modal.Body>
+            <Input
+              clearable
+              bordered
+              fullWidth
+              color="primary"
+              size="lg"
+              placeholder="Name"
+              aria-labelledby="name"
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              contentLeft={<BiRename fill={"currentColor"} />}
+            />
+            <Input
+              clearable
+              bordered
+              fullWidth
+              color="primary"
+              size="lg"
+              placeholder="Price"
+              aria-labelledby="price"
+              value={editPrice}
+              onChange={(e) => setEditPrice(Number(e.target.value))}
+              contentLeft={<IoLogoUsd />}
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button auto flat color="error" onPress={closeHandler}>
+              Close
+            </Button>
+            <Button auto onPress={editHandler}>
+              Edit
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </>
     );
   };
 
   const ShowBarcodeModal = () => {
-    const [showModal, setShowModal] = useState(false);
+    const [visible, setVisible] = useState(false);
+
+    const handler = () => setVisible(true);
+
+    const closeHandler = () => {
+      setVisible(false);
+    };
 
     return (
       <>
-        <button
-          className="text-white mt-2 cursor-pointer bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-700 dark:hover:bg-blue-800"
-          type={"submit"}
-          onClick={() => setShowModal(true)}
-        >
+        <Button auto color="error" shadow onPress={handler}>
           <BiBarcodeReader />
-        </button>
-        {showModal ? (
-          <>
-            <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-              <div className="relative w-auto my-6 mx-auto max-w-xl">
-                {/*content*/}
-                <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-gray-700 outline-none focus:outline-none">
-                  {/*header*/}
-                  <div className="flex items-start justify-between  border-slate-200 rounded-t">
-                    <button
-                      className="p-1 ml-auto bg-transparent border-0 opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                      onClick={() => setShowModal(false)}
-                    ></button>
-                  </div>
-                  {/*body*/}
-                  <div className="relative p-6 flex-auto">
-                    <Barcode value={barcode} />
-                  </div>
-                  {/*footer*/}
-                  <div className="flex items-center justify-center p-6 border-t border-solid border-slate-200 rounded-b">
-                    <button
-                      type="button"
-                      onClick={() => setShowModal(false)}
-                      className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-              </div>
+        </Button>
+        <Modal
+          closeButton
+          blur
+          aria-labelledby="modal-title"
+          open={visible}
+          onClose={closeHandler}
+        >
+          <Modal.Header>
+            <div>
+              <Barcode value={barcode} />
             </div>
-            <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
-          </>
-        ) : null}
+          </Modal.Header>
+
+          <Modal.Footer>
+            <Button auto flat color="default" onPress={closeHandler}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </>
     );
   };
@@ -303,25 +253,33 @@ export const ProductCard = ({ name, barcode, price }: Props) => {
 
   return (
     <>
-      <div className="max-w-sm bg-white flex rounded-lg shadow-md dark:bg-gray-800 justify-center dark:border-gray-700">
-        <div className="px-5 pb-5">
-          <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white mt-4">
-            שם מוצר: {name}
-          </h5>
-          <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white ">
-            ברקוד: {barcode}
-          </h5>
-          <div className="flex justify-between items-center">
-            <span className="text-xl font-bold text-gray-900 dark:text-white">
-              מחיר: {price + "₪"}
-            </span>
-          </div>
-          <DeleteProductModal />
-          <EditProductModal />
-          <ShowBarcodeModal />
-          <ErrorModal />
-        </div>
-      </div>
+      <Card isHoverable variant="bordered" css={{ maxW: "@sm" }}>
+        <Card.Body css={{ alignItems: "center" }}>
+          <Text h4> שם מוצר: {name}</Text>
+          <Text h4> ברקוד: {barcode}</Text>
+          <Text h4> מחיר: {price + "₪"}</Text>
+          <Card.Divider />
+          <Card.Footer>
+            <Row
+              css={{
+                mx: "$12",
+              }}
+              justify="center"
+            >
+              <Button size="xs" light>
+                <DeleteProductModal />
+              </Button>
+              <Button size="xs" light>
+                <EditProductModal />
+              </Button>
+              <Button size="xs" light>
+                <ShowBarcodeModal />
+              </Button>
+            </Row>
+            <ErrorModal />
+          </Card.Footer>
+        </Card.Body>
+      </Card>
     </>
   );
 };

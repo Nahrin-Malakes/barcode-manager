@@ -3,11 +3,12 @@ import { Product } from "@prisma/client";
 import { NextPage, GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 
-import { Navbar } from "@/components/Navbar";
+import { Nav } from "@/components/Navbar";
 import { ProductCard } from "@/components/ProductCard";
-import { Spinner } from "@/components/Spinner";
 import { trpc } from "@/utils/trpc";
 import { Session } from "next-auth";
+import { Container, Grid, Loading } from "@nextui-org/react";
+import { ToastContainer } from "react-toastify";
 
 interface Props {
   sess: Session;
@@ -25,9 +26,31 @@ const Product: NextPage<Props> = ({ sess: session }) => {
   }, [products]);
 
   return (
-    <div className="lg:h-max sm:h-max mx-auto my-auto bg-gray-900 w-full pb-4">
-      <Navbar session={session} />
-      {products.isLoading && (
+    <>
+      <Nav user={session.user} />
+      <ToastContainer />
+      <Container css={{ mt: "$10", maxW: "stretch", mx: "$20" }}>
+        <Grid.Container
+          justify="flex-start"
+          css={{
+            gap: "$8",
+            xs: 1,
+          }}
+        >
+          {products.isLoading && <Loading />}
+          {productsState &&
+            productsState.map((product) => (
+              <Grid key={product.id}>
+                <ProductCard
+                  barcode={product.barcode}
+                  name={product.name}
+                  price={Number(product.price)}
+                />
+              </Grid>
+            ))}
+        </Grid.Container>
+      </Container>
+      {/* {products.isLoading && (
         <div className="h-screen flex justify-center mt-4">
           <Spinner />
         </div>
@@ -43,8 +66,8 @@ const Product: NextPage<Props> = ({ sess: session }) => {
               price={Number(product.price)}
             />
           ))}
-      </div>
-    </div>
+      </div> */}
+    </>
   );
 };
 
@@ -67,3 +90,16 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 export default Product;
+
+// "@xs": {
+//   bg: "$yellow500",
+// },
+// "@sm": {
+//   bg: "$red500",
+// },
+// "@md": {
+//   bg: "$green500",
+// },
+// "@lg": {
+//   bg: "$pink800",
+// },
