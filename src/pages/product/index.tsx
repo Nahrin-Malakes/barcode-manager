@@ -29,7 +29,7 @@ const Product: NextPage<Props> = ({ sess: session }) => {
     <>
       <Nav user={session.user} />
       <ToastContainer />
-      <Container css={{ mt: "$10", maxW: "stretch", mx: "$20" }}>
+      <Container css={{ mt: "$10", maxW: "stretch" }}>
         <Grid.Container
           justify="flex-start"
           css={{
