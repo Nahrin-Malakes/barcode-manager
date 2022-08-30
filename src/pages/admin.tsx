@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/Navbar";
+import { Nav } from "@/components/Navbar";
 import { SessionCard } from "@/components/SessionCard";
 import { Spinner } from "@/components/Spinner";
 import { trpc } from "@/utils/trpc";
@@ -29,7 +29,7 @@ const AdminPage = ({ sess }: Props) => {
   return (
     <div className="h-screen bg-gray-900 text-gray-100">
       {/* @ts-ignore */}
-      <Navbar session={sess} />
+      <Nav user={sess.user} />
       <h1>Active sessions: </h1>
       {sessions.isLoading || (sessions.isFetching && <Spinner />)}
       {sessions.data.sessions &&
