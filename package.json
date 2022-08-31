@@ -18,6 +18,8 @@
     "@trpc/next": "^9.26.2",
     "@trpc/react": "^9.26.2",
     "@trpc/server": "^9.26.2",
+    "@upstash/ratelimit": "^0.1.5",
+    "@upstash/redis": "^1.12.0",
     "barcode-react-scanner": "^1.2.0",
     "next": "12.2.4",
     "next-auth": "^4.10.3",
